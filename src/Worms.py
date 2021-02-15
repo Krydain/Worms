@@ -1,4 +1,3 @@
-
 import os, sys
 import pygame
 from pygame.locals import *
@@ -9,9 +8,9 @@ import random
 from Vector2 import Vector2
 from Timer import Timer
 from MathG import MathG
+from Trajectory import Trajectory
 
 gravity = -9.81
-isResAir = False
 
 class World:
 
@@ -50,6 +49,9 @@ class World:
             else:
                 obj.Move(deltaGraphic)
                 
+            GetPropertiesTrajectory()
+            trajectory.DrawTrajectory(world.screen)
+
 
             self.screen.blit(obj.image, (obj.position.x,obj.position.y))      #draw new player
 
@@ -67,7 +69,6 @@ class World:
         if(obj.physic != None):
             self.physicObjects.remove(obj)
         self.objects.remove(obj)
-
 
 class Object:
     image = None
@@ -130,7 +131,7 @@ class Bullet:
     position = None
     isRightDirection = None
 
-    def __init__(self, posinit, vo, alphaa, direction):
+    def __init__(self, vo, alphaa, posinit, direction):
         self.Vo = vo / 5
         self.alpha = alphaa
         self.timeSinceBegin = 0
@@ -144,8 +145,6 @@ class Bullet:
         self.position.x = self.Vo * math.cos(self.alpha) * self.isRightDirection * self.timeSinceBegin + self.posInit.x
         self.position.y = -(1/2) * gravity * math.pow(-self.timeSinceBegin,2) + self.Vo * math.sin(self.alpha) * -self.timeSinceBegin + self.posInit.y
             
-
-
         if self.position.y > 300:
             del self
 
@@ -160,6 +159,7 @@ class EventHandler:
     def __init__(self):
         x, y = pygame.mouse.get_pos()
         self.mousePosition = Vector2(x,y)
+
 
 def QuitGame():
     pygame.quit() 
@@ -178,22 +178,30 @@ def KeyEvent(key,action):
 def MouseMotion():
     izi = 1
 
+
+
+def GetPropertiesTrajectory(isLoadBullet = False):
+    global trajectory
+    xMouse, yMouse = pygame.mouse.get_pos()
+    
+    xPlayer, yPlayer = player.GetMiddlePosition()
+    vMouseToPlayer = MathG.CreateVector2From2Points(Vector2(xMouse, yMouse),Vector2(xPlayer, yPlayer))
+    vGroundToPlayer = MathG.CreateVector2From2Points(Vector2(xMouse, 250),Vector2(xPlayer, yPlayer))
+    angle = MathG.GetAngleTwoVectors(vMouseToPlayer,vGroundToPlayer)
+    angle = angle * -1 if yMouse >= 250 else angle
+
+    norm = MathG.GetNormPoints(vMouseToPlayer.x, vMouseToPlayer.y)
+    direction = True if xMouse > xPlayer else False
+    trajectory = Trajectory(norm, angle, Vector2(xPlayer, yPlayer), direction)
+
+    if isLoadBullet:
+        LoadBullet(norm, angle, Vector2(xPlayer, yPlayer), direction, True)
+
+
 def MouseUp(btn):
-    global isResAir
     if btn == 1: # left click
-        xMouse, yMouse = pygame.mouse.get_pos()
-        print(xMouse)
-        print(yMouse)
-        xPlayer, yPlayer = player.GetMiddlePosition()
-        vMouseToPlayer = MathG.CreateVector2From2Points(Vector2(xMouse, yMouse),Vector2(xPlayer, yPlayer))
-        vGroundToPlayer = MathG.CreateVector2From2Points(Vector2(xMouse, 250),Vector2(xPlayer, yPlayer))
-        angle = MathG.GetAngleTwoVectors(vMouseToPlayer,vGroundToPlayer)
-        angle = angle * -1 if yMouse >= 250 else angle
-        #angle = angle * (180/math.pi)
-        norm = math.sqrt(math.pow(vMouseToPlayer.x,2) + math.pow(vMouseToPlayer.y,2))
-        direction = True if xMouse > xPlayer else False
-        LoadBullet(Vector2(xPlayer, yPlayer), norm, angle, direction, True)
-        isResAir = not(isResAir)
+        GetPropertiesTrajectory(True)
+        
         #print("Norm " + str(norm))
         #print("Angle " + str(angle))
         #print("Left click up")
@@ -247,14 +255,14 @@ def LoadBackground():
     background.image = pygame.transform.scale(background.image, (960, 540))
     world.backgroundImage = background
 
-def LoadBullet(posinit, vo, alphaa, direction, isGrenada):
-    bullet = Bullet(posinit, vo, alphaa, direction)
+def LoadBullet(vo, alphaa, posinit, direction, isGrenada):
+    bullet = Bullet(vo, alphaa, posinit, direction)
     bullet.image = pygame.image.load("../Images/GrenadeGame.png") if isGrenada else pygame.image.load("../Images/RoquetteGame.png")
     bullet.image = pygame.transform.scale(bullet.image, (6, 7))
     world.objects.append(bullet)
 
-def DrawTrajectory(self):
-    pygame.draw
+def DrawTrajectory():
+    pygame.draw.arc(world.screen, (255,255,255), )
 
 world = World(960,540)
 
@@ -273,6 +281,9 @@ isMinus1 = 1 if random.random() <= .5 else -1
 isMinus2 = 1 if random.random() < .5 else -1
 wind = Vector2(random.random() * 30 * isMinus1, random.random() * 30 * isMinus2)
 isWind = False
+
+trajectory = None
+
 world.Start()
 
 # 4 - keep looping through

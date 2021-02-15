@@ -1,5 +1,7 @@
 import math
 from Vector2 import Vector2
+import pygame
+from pygame.locals import *
 
 class MathG:
     @staticmethod
@@ -19,3 +21,11 @@ class MathG:
     @staticmethod
     def CreateVector2From2Points(v1,v2):
         return Vector2(abs(v1.x - v2.x),abs(v1.y - v2.y))
+
+    @staticmethod
+    def GetNormVector2(v):
+        return math.sqrt(math.pow(v.x,2) + math.pow(v.y,2))
+
+    @staticmethod
+    def GetNormPoints(x,y):
+        return math.sqrt(math.pow(x,2) + math.pow(y,2))
