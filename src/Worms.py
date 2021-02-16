@@ -7,7 +7,6 @@ import math
 import random
 from Vector2 import Vector2
 from Timer import Timer
-from MathG import MathG
 from Trajectory import Trajectory
 
 gravity = -9.81
@@ -92,7 +91,7 @@ class Object:
         self.move.x = 0
         self.move.y = 0
 
-        MathG.ApplyGravity(self,delta)
+        Vector2.ApplyGravity(self,delta)
 
     def GetMiddlePosition(self):
         XPos = self.image.get_width()
@@ -146,7 +145,7 @@ class Bullet:
         self.position.y = -(1/2) * gravity * math.pow(-self.timeSinceBegin,2) + self.Vo * math.sin(self.alpha) * -self.timeSinceBegin + self.posInit.y
             
         if self.position.y > 300:
-            del self
+            print("Under boom")
 
 class EventHandler:
     z = False
@@ -185,12 +184,12 @@ def GetPropertiesTrajectory(isLoadBullet = False):
     xMouse, yMouse = pygame.mouse.get_pos()
     
     xPlayer, yPlayer = player.GetMiddlePosition()
-    vMouseToPlayer = MathG.CreateVector2From2Points(Vector2(xMouse, yMouse),Vector2(xPlayer, yPlayer))
-    vGroundToPlayer = MathG.CreateVector2From2Points(Vector2(xMouse, 250),Vector2(xPlayer, yPlayer))
-    angle = MathG.GetAngleTwoVectors(vMouseToPlayer,vGroundToPlayer)
+    vMouseToPlayer = Vector2.CreateVector2From2Points(Vector2(xMouse, yMouse),Vector2(xPlayer, yPlayer))
+    vGroundToPlayer = Vector2.CreateVector2From2Points(Vector2(xMouse, 250),Vector2(xPlayer, yPlayer))
+    angle = Vector2.GetAngleTwoVectors(vMouseToPlayer,vGroundToPlayer)
     angle = angle * -1 if yMouse >= 250 else angle
 
-    norm = MathG.GetNormPoints(vMouseToPlayer.x, vMouseToPlayer.y)
+    norm = Vector2.GetNormPoints(vMouseToPlayer.x, vMouseToPlayer.y)
     direction = True if xMouse > xPlayer else False
     trajectory = Trajectory(norm, angle, Vector2(xPlayer, yPlayer), direction)
 
