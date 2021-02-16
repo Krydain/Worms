@@ -1,5 +1,7 @@
 import math
 import pygame
+from Bullet import Bullet
+from Vector2 import Vector2
 from pygame.locals import *
 
 class Trajectory:
@@ -9,17 +11,24 @@ class Trajectory:
     maxHeight = None
     maxWidth = None
     isRightDirection = None
+    world = None
 
-    def __init__(self,V0, alphaa, posInit, direction):
+    def __init__(self,V0, alphaa, posInit, direction, wrld):
+        self.SetTrajectory(V0, alphaa, posInit, direction, wrld)
+
+    def SetTrajectory(self, V0, alphaa, posInit, direction, wrld = None):
         self.v0 = V0 / 5
         self.alpha = alphaa
         self.posIni = posInit
         self.isRightDirection = direction
+        self.world = wrld
+
+        self.world = wrld if wrld != None else self.world
+
         isAbove = self.alpha > 0 and self.alpha < math.pi
 
         self.maxHeight = (self.v0**2) * (math.sin(alphaa)**2) / (2*-9.81) *-1 if isAbove else 0
         self.maxWidth = self.v0**2 * math.sin(self.alpha) * math.cos(self.alpha) / -9.81 if isAbove else 0
-    
 
 
         if not(self.isRightDirection):
@@ -36,10 +45,31 @@ class Trajectory:
                 screen.set_at((x,y), (255,255,255))
 
 
-            screen.set_at((int(self.posIni.x - self.maxWidth), int(self.posIni.y - self.maxHeight)), (255,0,0))
-            screen.set_at((int(self.posIni.x - self.maxWidth) + 1, int(self.posIni.y - self.maxHeight)), (255,0,0))
-            screen.set_at((int(self.posIni.x - self.maxWidth) + 2, int(self.posIni.y - self.maxHeight)), (255,0,0))
-            screen.set_at((int(self.posIni.x - self.maxWidth) + 3, int(self.posIni.y - self.maxHeight)), (255,0,0))
-            screen.set_at((int(self.posIni.x - self.maxWidth) - 1, int(self.posIni.y - self.maxHeight)), (255,0,0))
-            screen.set_at((int(self.posIni.x - self.maxWidth) - 2, int(self.posIni.y - self.maxHeight)), (255,0,0))
-            screen.set_at((int(self.posIni.x - self.maxWidth) - 3, int(self.posIni.y - self.maxHeight)), (255,0,0))
+            for i in range(-3,4):
+                screen.set_at((int(self.posIni.x - self.maxWidth) + i, int(self.posIni.y - self.maxHeight)), (255,0,0))
+
+
+    def GetPropertiesTrajectory(self, teams):
+
+        xMouse, yMouse = pygame.mouse.get_pos()
+        xPlayer, yPlayer = teams.actualCharacter.GetMiddlePosition()
+        vMouseToPlayer = Vector2.CreateVector2From2Points(Vector2(xMouse, yMouse),Vector2(xPlayer, yPlayer))
+        vGroundToPlayer = Vector2.CreateVector2From2Points(Vector2(xMouse, 250),Vector2(xPlayer, yPlayer))
+        angle = Vector2.GetAngleTwoVectors(vMouseToPlayer,vGroundToPlayer)
+        angle = angle * -1 if yMouse >= 250 else angle
+
+        norm = Vector2.GetNormPoints(vMouseToPlayer.x, vMouseToPlayer.y)
+        direction = True if xMouse > xPlayer else False
+
+        
+        self.SetTrajectory(norm, angle, Vector2(xPlayer, yPlayer), direction)
+
+
+    def LoadBullet(self, isGrenada):
+        bullet = Bullet(self.v0, self.alpha, self.posIni, self.isRightDirection)
+        bullet.image = pygame.image.load("../Images/GrenadeGame.png") if isGrenada else pygame.image.load("../Images/RoquetteGame.png")
+        bullet.image = pygame.transform.scale(bullet.image, (6, 7))
+        self.world.objects.append(bullet)
+        
+        
+

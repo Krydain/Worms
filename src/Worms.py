@@ -8,6 +8,12 @@ import random
 from Vector2 import Vector2
 from Timer import Timer
 from Trajectory import Trajectory
+from EventHandler import EventHandler
+from Bullet import Bullet
+from Wind import Wind
+from Teams import Teams
+from Image import Image
+from StateGame import StateGame, State
 
 gravity = -9.81
 
@@ -48,15 +54,16 @@ class World:
             else:
                 obj.Move(deltaGraphic)
                 
-            GetPropertiesTrajectory()
-            trajectory.DrawTrajectory(world.screen)
+            #GetPropertiesTrajectory()
+            #trajectory.DrawTrajectory(world.screen)
 
 
             self.screen.blit(obj.image, (obj.position.x,obj.position.y))      #draw new player
 
-        if isWind: 
-            DrawWind()
-        pygame.display.update()
+        if wind.isWindy: 
+            wind.DrawWind()
+            
+        
 
 
     def Add(self, obj):
@@ -69,40 +76,6 @@ class World:
             self.physicObjects.remove(obj)
         self.objects.remove(obj)
 
-class Object:
-    image = None
-    position = None
-    move = Vector2(0,0)
-    radius = None
-    rotation = None
-    physic = None
-    isGravity = False
-
-    def __init__(self):
-        self.position = Vector2(0,0)
-
-    def SetMove(self,x,y):
-        self.move.x = x
-        self.move.y = y
-
-    def Move(self,delta):
-        self.position.x = self.position.x + self.move.x * delta
-        self.position.y = self.position.y + self.move.y * delta
-        self.move.x = 0
-        self.move.y = 0
-
-        Vector2.ApplyGravity(self,delta)
-
-    def GetMiddlePosition(self):
-        XPos = self.image.get_width()
-        YPos = self.image.get_height()
-        XPos = XPos / 2
-        YPos = YPos / 2
-
-        XPos = XPos + self.position.x
-        YPos = YPos + self.position.y
-
-        return (XPos, YPos)
 
 class Physic:
     acceleration = 0.0
@@ -120,203 +93,45 @@ class Physic:
         if self.speed == 0.0 and self.acceleration == 0.0:
             self.inMotion = False
 
-class Bullet:
-    Vo = None
-    alpha = None
-    timeSinceBegin = None
-    posInit = Vector2(0,0)
-    image = None
-    isInMotion = False
-    position = None
-    isRightDirection = None
-
-    def __init__(self, vo, alphaa, posinit, direction):
-        self.Vo = vo / 5
-        self.alpha = alphaa
-        self.timeSinceBegin = 0
-        self.posInit = Vector2(posinit.x , posinit.y)
-        self.isInMotion = True
-        self.position = Vector2(posinit.x , posinit.y)
-        self.isRightDirection = 1 if direction else -1
-
-    def UpdatePosition(self, delta):
-        self.timeSinceBegin = self.timeSinceBegin + delta
-        self.position.x = self.Vo * math.cos(self.alpha) * self.isRightDirection * self.timeSinceBegin + self.posInit.x
-        self.position.y = -(1/2) * gravity * math.pow(-self.timeSinceBegin,2) + self.Vo * math.sin(self.alpha) * -self.timeSinceBegin + self.posInit.y
-            
-        if self.position.y > 300:
-            print("Under boom")
-
-class EventHandler:
-    z = False
-    q = False
-    s = False
-    d = False
-
-    mousePosition = None
-
-    def __init__(self):
-        x, y = pygame.mouse.get_pos()
-        self.mousePosition = Vector2(x,y)
-
-class TimerBullet:
-    timer = None
-    bullet = None
-    delay = 0.0
-    timePassed = 0.0
-
-    def __init__(self):
-        self.timer = Timer()
-
-    def Add(self, bullett, delayy):
-        self.bullet = bullett
-        self.delayy = delayy
-        self.timePassed = 0.0
-        self.timer.deltaTime()
-
-    def Update(self):
-        if bullet != None:
-            self.timePassed = self.timePassed + self.timer.deltaTime()
-            if self.timePassed > self.delay:
-                self.Explode()
-
-    def Explode(self):
-        # for each player bam bam bam
-
-
-def QuitGame():
-    pygame.quit() 
-    exit(0)
-
-def KeyEvent(key,action):
-    if key == pygame.K_z:
-        eventHandler.z = action
-    elif key == pygame.K_q:
-        eventHandler.q = action
-    elif key == pygame.K_s:
-        eventHandler.s = action
-    elif key == pygame.K_d:
-        eventHandler.d = action
-
-def MouseMotion():
-    izi = 1
-
-
-
-def GetPropertiesTrajectory(isLoadBullet = False):
-    global trajectory
-    xMouse, yMouse = pygame.mouse.get_pos()
-    
-    xPlayer, yPlayer = player.GetMiddlePosition()
-    vMouseToPlayer = Vector2.CreateVector2From2Points(Vector2(xMouse, yMouse),Vector2(xPlayer, yPlayer))
-    vGroundToPlayer = Vector2.CreateVector2From2Points(Vector2(xMouse, 250),Vector2(xPlayer, yPlayer))
-    angle = Vector2.GetAngleTwoVectors(vMouseToPlayer,vGroundToPlayer)
-    angle = angle * -1 if yMouse >= 250 else angle
-
-    norm = Vector2.GetNormPoints(vMouseToPlayer.x, vMouseToPlayer.y)
-    direction = True if xMouse > xPlayer else False
-    trajectory = Trajectory(norm, angle, Vector2(xPlayer, yPlayer), direction)
-
-    if isLoadBullet:
-        LoadBullet(norm, angle, Vector2(xPlayer, yPlayer), direction, True)
-
-
-def MouseUp(btn):
-    if btn == 1: # left click
-        GetPropertiesTrajectory(True)
-        
-        #print("Norm " + str(norm))
-        #print("Angle " + str(angle))
-        #print("Left click up")
-    elif btn == 3: # right click
-        print("Right click up")
-
-
-def MouseDown(btn):
-    if btn == 1: # left click
-        print("Left click down")
-    elif btn == 3: # right click
-        print("Right click down")
-
-def GetEvents():
-# 8 - loop through the events
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            KeyEvent(event.key,True)
-        elif event.type == pygame.KEYUP:
-            KeyEvent(event.key,False)
-        elif event.type == pygame.MOUSEMOTION:
-            MouseMotion()
-        elif event.type == pygame.MOUSEBUTTONUP:
-            MouseUp(event.button)
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            MouseDown(event.button)
-        elif event.type == pygame.QUIT:
-            QuitGame()
-        
-def ProcessEvents():
-    if eventHandler.q ^ eventHandler.d: # XOR
-        direction = -1 if eventHandler.q else 1
-        player.SetMove(12 * direction,0)
-    if eventHandler.z:
-        player.GetMiddlePosition()
-    
-def DrawWind():
-    pygame.draw.line(world.screen, (255,255,255), (886,55), (wind.x + 886, wind.y + 55),3)            
-
-
-def LoadPlayer(isEnnemy):
-    player = Object()
-    player.image = pygame.image.load("../Images/WormsEnnemyModelGame.png").convert_alpha() if isEnnemy else pygame.image.load("../Images/WormsModelGame.png").convert_alpha()
-    player.image = pygame.transform.scale(player.image, (25, 38))
-    world.objects.append(player)
-    return player
 
 def LoadBackground():
-    background = Object()
-    background.image = pygame.image.load("../Images/BackGroundGame.png")
+    background = Image(pygame.image.load("../Images/BackGroundGame.png"))
     background.image = pygame.transform.scale(background.image, (960, 540))
     world.backgroundImage = background
 
-def LoadBullet(vo, alphaa, posinit, direction, isGrenada):
-    bullet = Bullet(vo, alphaa, posinit, direction)
-    bullet.image = pygame.image.load("../Images/GrenadeGame.png") if isGrenada else pygame.image.load("../Images/RoquetteGame.png")
-    bullet.image = pygame.transform.scale(bullet.image, (6, 7))
-    world.objects.append(bullet)
 
-def DrawTrajectory():
-    pygame.draw.arc(world.screen, (255,255,255), )
 
 world = World(960,540)
 
-eventHandler = EventHandler()
 
-# 3 - Load images
-player = LoadPlayer(False)
-player.position = Vector2(380,231)
-ennemy = LoadPlayer(True)
-ennemy.position = Vector2(580,231)
+
+
 LoadBackground()
 bullet = None
 
-actualPlayer = None
-isMinus1 = 1 if random.random() <= .5 else -1
-isMinus2 = 1 if random.random() < .5 else -1
-wind = Vector2(random.random() * 30 * isMinus1, random.random() * 30 * isMinus2)
-isWind = False
+wind = Wind(world.screen)
 
 trajectory = None
 
+teams = Teams(world)
+stateGame = StateGame(teams)
+eventHandler = EventHandler(teams, stateGame)
+
+stateGame.state = State.WaitPlayerToSpace
+
 world.Start()
+teams.BeginGame()
 
 # 4 - keep looping through
 while 1:
 
-    GetEvents()
-    ProcessEvents()
+    eventHandler.GetEvents()
+    eventHandler.ProcessEvents()
     world.UpdateGraphics()
-    #print(player.position.x)
-    pygame.time.delay(16) 
+
+    pygame.display.update()
+
+    pygame.time.delay(12) 
 
         
 
