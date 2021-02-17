@@ -12,15 +12,12 @@ class State(Enum):
     HasWin = 7
 
 class StateGame:
-    state = State.Nothing
-    timeTurn = 0
-    timer = None
-    teams = None
 
     def __init__(self, team):
-        self.state = State.Start
+        self.state = State.WaitPlayerToSpace
         self.timer = Timer()
         self.teams = team
+        self.timeTurn = 0
 
     def StartTurn(self):
         self.timeTurn = 0.0
@@ -54,7 +51,8 @@ class StateGame:
                 return True 
         elif self.state == State.WaitPlayer:
             self.StartTurn()
-            self.state
+            self.state = State.InClickForShoot
+            return True
 
     def AskToReturnInGame(self):
         self.timeTurn = self.timeTurn + self.timer.deltaTime()

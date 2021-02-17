@@ -5,16 +5,18 @@ from Vector2 import Vector2
 from pygame.locals import *
 
 class Trajectory:
-    v0 = None
-    alpha = None
-    posIni = None
-    maxHeight = None
-    maxWidth = None
-    isRightDirection = None
-    world = None
+    
 
-    def __init__(self,V0, alphaa, posInit, direction, wrld):
-        self.SetTrajectory(V0, alphaa, posInit, direction, wrld)
+    def __init__(self,teams):
+        self.v0 = None
+        self.alpha = None
+        self.posIni = None
+        self.maxHeight = None
+        self.maxWidth = None
+        self.isRightDirection = None
+        self.world = None
+        self.teams = teams
+        self.GetPropertiesTrajectory(teams)
 
     def SetTrajectory(self, V0, alphaa, posInit, direction, wrld = None):
         self.v0 = V0 / 5

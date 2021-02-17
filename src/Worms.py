@@ -14,6 +14,7 @@ from Wind import Wind
 from Teams import Teams
 from Image import Image
 from StateGame import StateGame, State
+from UI import UI
 
 gravity = -9.81
 
@@ -23,10 +24,13 @@ class World:
     objects = []
     physicObjects = []
     backgroundImage = None
+    bulletType = False
 
     resolutionRef = Vector2(1920,1080) 
     actualResolution = None
     ratioResolution = None
+
+    trajectory = None
 
     screen = None
 
@@ -44,11 +48,12 @@ class World:
         self.physicTimer.deltaTime()
 
     def UpdateGraphics(self):
+
         deltaGraphic = self.graphicTimer.deltaTime()
-        self.screen.blit(self.backgroundImage.image, (0,0))  
+        self.screen.blit(self.backgroundImage.image, (0,0)) 
+
         for obj in self.objects:
             
-
             if isinstance(obj, Bullet) and obj.isInMotion:
                 obj.UpdatePosition(deltaGraphic)
             else:
@@ -56,15 +61,20 @@ class World:
                 
             #GetPropertiesTrajectory()
             #trajectory.DrawTrajectory(world.screen)
-
-
             self.screen.blit(obj.image, (obj.position.x,obj.position.y))      #draw new player
+
+            ui.Draw(self.bulletType)
+
+        #if self.trajectory != None:
+            #self.trajectory.GetPropertiesTrajectory
+            #self.trajectory.DrawTrajectory(self.screen)
 
         if wind.isWindy: 
             wind.DrawWind()
             
         
-
+    def SwitchBulletType(self):
+        self.bulletType = not(self.bulletType)
 
     def Add(self, obj):
         if(obj.physic != None):
@@ -75,6 +85,10 @@ class World:
         if(obj.physic != None):
             self.physicObjects.remove(obj)
         self.objects.remove(obj)
+        
+
+
+
 
 
 class Physic:
@@ -100,24 +114,18 @@ def LoadBackground():
     world.backgroundImage = background
 
 
-
 world = World(960,540)
-
-
-
 
 LoadBackground()
 bullet = None
 
 wind = Wind(world.screen)
 
-trajectory = None
-
 teams = Teams(world)
 stateGame = StateGame(teams)
-eventHandler = EventHandler(teams, stateGame)
+eventHandler = EventHandler(teams, stateGame, world)
 
-stateGame.state = State.WaitPlayerToSpace
+ui = UI(world.screen, teams, stateGame)
 
 world.Start()
 teams.BeginGame()
@@ -132,8 +140,3 @@ while 1:
     pygame.display.update()
 
     pygame.time.delay(12) 
-
-        
-
-
-    

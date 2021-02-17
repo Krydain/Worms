@@ -11,26 +11,29 @@ class Teams:
 
     teamTurn = 1
 
-    actualCharacter = Character()
+    world = None
+    actualCharacter = Character(0)
 
     def __init__(self,wrld):
-            self.Createteams(wrld)
+        self.world = wrld
+        self.Createteams()
+            
 
-    def Createteams(self,wrld):
+    def Createteams(self):
         if len(self.blueTeam) == 0 and len(self.redTeam) == 0:
             for i in range(0,6):
                 isEnnemy = False if i%2 == 0 else True
-                self.LoadCharacter(isEnnemy, wrld)
+                self.LoadCharacter(i,isEnnemy)
         else:
             print("Teams already created")
 
                 
-    def LoadCharacter(self, isEnnemy, wrld):
-        character = Character()
+    def LoadCharacter(self, idd, isEnnemy):
+        character = Character(idd)
         character.image = pygame.image.load("../Images/WormsEnnemyModelGame.png").convert_alpha() if isEnnemy else pygame.image.load("../Images/WormsModelGame.png").convert_alpha()
         character.image = pygame.transform.scale(character.image, (25, 38))
         
-        wrld.objects.append(character)
+        self.world.objects.append(character)
 
         if isEnnemy:
             self.redTeam.append(character)
@@ -46,14 +49,11 @@ class Teams:
 
     def Next(self):
         self.teamTurn = self.teamTurn + 1
-
+        self.actualCharacter = None
         if self.teamTurn % 2: #blue team
-            print("BlueTeam len : " + str(len(self.blueTeam)))
-            self.actualCharacter = self.blueTeam[random.randint(0, len(self.blueTeam))]
-
+            self.actualCharacter = self.blueTeam[random.randint(0, len(self.blueTeam) - 1)]
         else: # red team
-            print("RedTeam len : " + str(len(self.redTeam)))
-            self.actualCharacter = self.redTeam[random.randint(0, len(self.redTeam))]
+            self.actualCharacter = self.redTeam[random.randint(0, len(self.redTeam) - 1)]
 
 
     def CharacterDied(self, charac):
@@ -61,6 +61,7 @@ class Teams:
             self.blueTeam.remove(charac)
         elif charac in self.redTeam:
             self.redTeam.remove(charac)
+            
 
 
     def WatchTeamWin(self):

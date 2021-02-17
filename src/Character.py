@@ -2,21 +2,28 @@ from Vector2 import Vector2
 
 class Character:
     image = None
-    position = None
-    move = Vector2(0,0)
+    
     radius = None
     rotation = None
     physic = None
     isGravity = False
-    life = None
+    characterId = None
+    
 
-    def __init__(self):
+    def __init__(self, idd):
         self.position = Vector2(0,0)
         self.life = 100
+        self.characterId = idd
+        self.move = Vector2(0,0)
+
+
+    def __eq__(self, other):
+        assert isinstance(other, Character)
+        return self.characterId == other.characterId
 
     def SetMove(self,x,y):
-        self.move.x = x
-        self.move.y = y
+        self.move.x = self.move.x + x
+        self.move.y = self.move.y + y
 
     def Move(self,delta):
         self.position.x = self.position.x + self.move.x * delta

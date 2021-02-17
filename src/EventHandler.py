@@ -3,6 +3,7 @@ from pygame.locals import *
 from Vector2 import Vector2
 from Teams import Teams
 from StateGame import State, StateGame
+from Trajectory import Trajectory
 
 class EventHandler:
     z = False
@@ -13,6 +14,7 @@ class EventHandler:
 
     leftMouse = False
     rightMouse = False
+    middleMouse = False
 
     characterCanMove = False
 
@@ -20,11 +22,12 @@ class EventHandler:
     stateGame = None
     mousePosition = None
 
-    def __init__(self, team, stategame):
+    def __init__(self, team, stategame, world):
         x, y = pygame.mouse.get_pos()
         self.mousePosition = Vector2(x,y)
         self.teams = team
         self.stateGame = stategame
+        self.world = world
 
     def KeyEvent(self, key, action):
         if key == pygame.K_z:
@@ -70,17 +73,19 @@ class EventHandler:
                 self.MouseUp(event.button)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.MouseDown(event.button)
+            elif event.type == pygame.MOUSEWHEEL:
+                self.middleMouse = event.y + self.middleMouse
             elif event.type == pygame.QUIT:
                 self.QuitGame()
             
     def ProcessEvents(self):
         self.ProcessKey()
         self.ProcessMouse()
-        self.ResetInputs()
 
     def ProcessKey(self):
         if self.stateGame.state == State.WaitPlayerToSpace:
             if self.space:
+                print("WaitPlayer")
                 self.stateGame.state = State.WaitPlayer
 
         elif self.stateGame.CanIMove():
@@ -88,31 +93,24 @@ class EventHandler:
                 direction = -1 if self.q else 1
                 self.teams.actualCharacter.SetMove(12 * direction,0)
 
-
     def ProcessMouse(self):
         if (self.stateGame.state == State.InGame or self.stateGame.state == State.WaitPlayer) and self.leftMouse:
             if self.stateGame.CanIAim():
-                traj = "yes"
-            # Trajectory create
+                self.world.trajectory = Trajectory(self.teams)
         elif self.stateGame.state == State.InClickForShoot and self.rightMouse:
             if not(self.stateGame.AskToReturnInGame()):
-                izi = 1
-                # Trajectory destroy
+                self.world.trajectory = None
 
         elif self.stateGame.state == State.InClickForShoot and not(self.leftMouse):
             # Shoot
             self.stateGame.state = State.WaitBullet
 
 
-    def ResetInputs(self):
-        self.z = False
-        self.q = False
-        self.s = False
-        self.d = False
-        self.space = False
+        if self.middleMouse % 2 != 0:
+            self.world.SwitchBulletType()
 
-        self.leftMouse = False
-        self.rightMouse = False
+        self.middleMouse = 0
+
 
     def QuitGame(self):
         pygame.quit() 
