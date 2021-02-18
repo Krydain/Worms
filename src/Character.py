@@ -2,36 +2,43 @@ from Vector2 import Vector2
 
 class Character:
     image = None
-    
     radius = None
     rotation = None
     physic = None
     isGravity = False
     characterId = None
+    velocity = None
     
 
-    def __init__(self, idd):
+    def __init__(self, _id):
         self.position = Vector2(0,0)
         self.life = 100
-        self.characterId = idd
+        self.characterId = _id
         self.move = Vector2(0,0)
+        self.velocity = Vector2(0,0)
 
 
     def __eq__(self, other):
-        assert isinstance(other, Character)
-        return self.characterId == other.characterId
+        if isinstance(other, Character):
+            return self.characterId == other.characterId
+        else:
+            return False
 
     def SetMove(self,x,y):
         self.move.x = self.move.x + x
         self.move.y = self.move.y + y
 
-    def Move(self,delta):
+    def Move(self,delta, teams):
         self.position.x = self.position.x + self.move.x * delta
         self.position.y = self.position.y + self.move.y * delta
         self.move.x = 0
         self.move.y = 0
 
         Vector2.ApplyGravity(self,delta)
+
+        if self.position.y > 540:
+            teams.CharacterDied(self)
+            teams.WatchTeamWin()
 
     def GetMiddlePosition(self):
         XPos = self.image.get_width()

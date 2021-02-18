@@ -63,8 +63,11 @@ class StateGame:
         else:
             self.state = State.InGame
             return True 
-
         
-        
-
+    def GetTimeTurn(self):
+        if self.timeTurn < 3:
+            self.timeTurn = self.timeTurn + self.timer.deltaTime()
+            return self.timeTurn 
+        else:
+            return 3
 

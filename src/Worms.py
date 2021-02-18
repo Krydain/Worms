@@ -15,6 +15,7 @@ from Teams import Teams
 from Image import Image
 from StateGame import StateGame, State
 from UI import UI
+from TimerBullet import TimerBullet
 
 gravity = -9.81
 
@@ -24,8 +25,9 @@ class World:
     objects = []
     physicObjects = []
     backgroundImage = None
+    
     bulletType = False
-
+    timerBullet = None
     resolutionRef = Vector2(1920,1080) 
     actualResolution = None
     ratioResolution = None
@@ -41,6 +43,7 @@ class World:
         self.ratioResolution = Vector2(self.resolutionRef.x/self.actualResolution.x,self.resolutionRef.y/self.actualResolution.y)
         self.graphicTimer = Timer()
         self.physicTimer = Timer()
+        self.bullet = None
 
     def Start(self):
         self.screen.blit(self.backgroundImage.image,(0,0))
@@ -53,28 +56,58 @@ class World:
         self.screen.blit(self.backgroundImage.image, (0,0)) 
 
         for obj in self.objects:
-            
-            if isinstance(obj, Bullet) and obj.isInMotion:
-                obj.UpdatePosition(deltaGraphic)
-            else:
-                obj.Move(deltaGraphic)
+            obj.Move(deltaGraphic,teams)
                 
-            #GetPropertiesTrajectory()
-            #trajectory.DrawTrajectory(world.screen)
             self.screen.blit(obj.image, (obj.position.x,obj.position.y))      #draw new player
+        
+        if isinstance(self.bullet, Bullet):
+            if self.bullet.isInMotion: 
+                isTouch = self.bullet.UpdatePosition(deltaGraphic)
+                if isTouch is True:
+                    delay = 5 if self.bulletType else 0
+                    self.timerBullet = TimerBullet(self.bullet, delay, self)
+                elif isTouch is False:
+                    self.bullet = None
+                    stateGame.state = State.WaitPlayerToSpace
+                    teams.Next()
 
-            ui.Draw(self.bulletType)
 
-        #if self.trajectory != None:
-            #self.trajectory.GetPropertiesTrajectory
-            #self.trajectory.DrawTrajectory(self.screen)
+            if self.bullet != None:
+                self.screen.blit(self.bullet.image, (self.bullet.position.x,self.bullet.position.y)) 
+
+        if self.trajectory != None:
+            self.trajectory.GetPropertiesTrajectory(teams)
+            self.trajectory.DrawTrajectory(self.screen)
 
         if wind.isWindy: 
             wind.DrawWind()
+
+        if self.timerBullet != None:
+            self.timerBullet.Update()
+
+        ui.Draw(self.bulletType)
             
         
+    def LoadBullet(self):
+        self.trajectory.GetPropertiesTrajectory(teams)
+        self.bullet = Bullet(self.trajectory.v0, self.trajectory.alpha, self.trajectory.posIni, self.trajectory.isRightDirection)
+        self.bullet.image = pygame.image.load("../Images/GrenadeGame.png") if self.bulletType else pygame.image.load("../Images/RoquetteBulletGame.png")
+        self.bullet.image = pygame.transform.scale(self.bullet.image, (6, 7)) if self.bulletType else pygame.transform.scale(self.bullet.image, (6, 7))
+        self.trajectory = None
+
+
     def SwitchBulletType(self):
         self.bulletType = not(self.bulletType)
+
+    def BulletExplode(self):
+        self.timerBullet = None
+        xPosition = self.bullet.position.x
+        teams.DoesBulletKill(xPosition)
+        self.bullet = None
+
+    def Next(self):
+        teams.Next()
+        stateGame.state = State.WaitPlayerToSpace
 
     def Add(self, obj):
         if(obj.physic != None):
@@ -85,6 +118,8 @@ class World:
         if(obj.physic != None):
             self.physicObjects.remove(obj)
         self.objects.remove(obj)
+
+    
         
 
 
@@ -117,8 +152,6 @@ def LoadBackground():
 world = World(960,540)
 
 LoadBackground()
-bullet = None
-
 wind = Wind(world.screen)
 
 teams = Teams(world)
@@ -136,7 +169,5 @@ while 1:
     eventHandler.GetEvents()
     eventHandler.ProcessEvents()
     world.UpdateGraphics()
-
     pygame.display.update()
-
     pygame.time.delay(12) 

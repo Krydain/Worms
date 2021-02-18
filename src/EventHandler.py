@@ -85,7 +85,6 @@ class EventHandler:
     def ProcessKey(self):
         if self.stateGame.state == State.WaitPlayerToSpace:
             if self.space:
-                print("WaitPlayer")
                 self.stateGame.state = State.WaitPlayer
 
         elif self.stateGame.CanIMove():
@@ -100,13 +99,19 @@ class EventHandler:
         elif self.stateGame.state == State.InClickForShoot and self.rightMouse:
             if not(self.stateGame.AskToReturnInGame()):
                 self.world.trajectory = None
-
+            else:
+                self.world.trajectory = None
+                self.leftMouse = False
         elif self.stateGame.state == State.InClickForShoot and not(self.leftMouse):
-            # Shoot
-            self.stateGame.state = State.WaitBullet
+            if(self.stateGame.GetTimeTurn() < 3):
+                self.world.LoadBullet()
+                self.stateGame.state = State.WaitBullet
+            else:
+                self.world.trajectory = None
+                self.stateGame.state = State.WaitPlayerToSpace
+                self.teams.Next()
 
-
-        if self.middleMouse % 2 != 0:
+        if self.stateGame.state != State.WaitBullet and self.middleMouse % 2 != 0:
             self.world.SwitchBulletType()
 
         self.middleMouse = 0

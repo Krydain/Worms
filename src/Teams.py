@@ -44,8 +44,8 @@ class Teams:
 
 
     def BeginGame(self):
-        if self.blueTeam == 3 and self.redTeam == 3:
-            self.actualCharacter = self.blueTeam[0]
+        if len(self.blueTeam) == 3 and len(self.redTeam) == 3:
+            self.Next()
 
     def Next(self):
         self.teamTurn = self.teamTurn + 1
@@ -59,10 +59,21 @@ class Teams:
     def CharacterDied(self, charac):
         if charac in self.blueTeam:
             self.blueTeam.remove(charac)
+            self.world.objects.remove(charac)
         elif charac in self.redTeam:
             self.redTeam.remove(charac)
+            self.world.objects.remove(charac)
             
+    def DoesBulletKill(self,x):
+        for charac in self.blueTeam:
+            if self.IsInRange(x,charac.position.x):
+                self.CharacterDied(charac)
 
+        for charac in self.redTeam:
+            if self.IsInRange(x,charac.position.x):
+                self.CharacterDied(charac)
+
+        self.WatchTeamWin()
 
     def WatchTeamWin(self):
         if len(self.blueTeam) == 0 and len(self.blueTeam) == 0:
@@ -71,3 +82,13 @@ class Teams:
             print("Red win")
         elif len(self.redTeam) == 0:
             print("Blue win")
+        else:
+            self.world.Next()
+
+    def IsInRange(self, x1, x2):
+        if x1 > x2:
+            x = x1 - x2
+        else:
+            x = x2 - x1
+
+        return x < 15

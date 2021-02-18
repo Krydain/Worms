@@ -52,7 +52,6 @@ class Trajectory:
 
 
     def GetPropertiesTrajectory(self, teams):
-
         xMouse, yMouse = pygame.mouse.get_pos()
         xPlayer, yPlayer = teams.actualCharacter.GetMiddlePosition()
         vMouseToPlayer = Vector2.CreateVector2From2Points(Vector2(xMouse, yMouse),Vector2(xPlayer, yPlayer))
@@ -65,13 +64,6 @@ class Trajectory:
 
         
         self.SetTrajectory(norm, angle, Vector2(xPlayer, yPlayer), direction)
-
-
-    def LoadBullet(self, isGrenada):
-        bullet = Bullet(self.v0, self.alpha, self.posIni, self.isRightDirection)
-        bullet.image = pygame.image.load("../Images/GrenadeGame.png") if isGrenada else pygame.image.load("../Images/RoquetteGame.png")
-        bullet.image = pygame.transform.scale(bullet.image, (6, 7))
-        self.world.objects.append(bullet)
         
         
 

@@ -26,3 +26,7 @@ class UI:
             self.screen.blit(self.bulletType1, (35,9)) 
         else: 
             self.screen.blit(self.bulletType2, (35,10)) 
+
+        percent = self.stateGame.GetTimeTurn() / 3.0 * 50.0
+        pygame.draw.rect(self.screen,(255,255,255), (9,30,14, int(percent)))
+        pygame.draw.rect(self.screen,(255,255,255), (9,80,14,5))

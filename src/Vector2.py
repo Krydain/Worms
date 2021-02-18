@@ -17,8 +17,8 @@ class Vector2:
                 solf.isGravity = True
 
         if solf.isGravity:
-            solf.position.y += delta * (solf.velocity.y + delta * solf.delta / 2)
-            solf.velocity.y += solf.timestep * solf.acceleration.y
+            solf.position.y += delta * (solf.velocity.y)
+            solf.velocity.y += delta * 9.81
 
     @staticmethod
     def GetAngleTwoVectors(v1, v2):
