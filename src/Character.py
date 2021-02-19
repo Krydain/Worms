@@ -1,13 +1,6 @@
 from Vector2 import Vector2
 
 class Character:
-    image = None
-    radius = None
-    rotation = None
-    physic = None
-    isGravity = False
-    characterId = None
-    velocity = None
     
     def __init__(self, _id):
         self.position = Vector2(0,0)
@@ -15,6 +8,11 @@ class Character:
         self.characterId = _id
         self.move = Vector2(0,0)
         self.velocity = Vector2(0,0)
+        self.image = None
+        self.radius = None
+        self.rotation = None
+        self.physic = None
+        self.isGravity = False
 
     def __eq__(self, other):
         if isinstance(other, Character):

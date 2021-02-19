@@ -6,28 +6,25 @@ from StateGame import State, StateGame
 from Trajectory import Trajectory
 
 class EventHandler:
-    z = False
-    q = False
-    s = False
-    d = False
-    space = False
-
-    leftMouse = False
-    rightMouse = False
-    middleMouse = False
-
-    characterCanMove = False
-
-    teams = None
-    stateGame = None
-    mousePosition = None
-
+    
     def __init__(self, world):
         x, y = pygame.mouse.get_pos()
         self.mousePosition = Vector2(x,y)
         self.teams = world.teams
         self.stateGame = world.stateGame
         self.world = world
+
+        self.z = False
+        self.q = False
+        self.s = False
+        self.d = False
+        self.space = False
+
+        self.leftMouse = False
+        self.rightMouse = False
+        self.middleMouse = False
+
+    characterCanMove = False
 
     def KeyEvent(self, key, action):
         if key == pygame.K_z:

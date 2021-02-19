@@ -2,8 +2,6 @@ from datetime import datetime
 
 class Timer:
 
-    lastTime = None
-
     def __init__(self):
         self.lastTime = datetime.now()
 

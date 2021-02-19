@@ -4,14 +4,11 @@ from pygame.locals import *
 
 class Wind:
 
-    x = None
-    y = None
-
-    isWindy = False
-    screen = None
-
     def __init__(self, scren):
         self.screen = scren
+        self.x = None
+        self.y = None
+        self.isWindy = False
 
     def New(self, screen):
         self.isWindy = True

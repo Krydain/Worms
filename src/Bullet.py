@@ -2,15 +2,6 @@ from Vector2 import Vector2
 import math
 
 class Bullet:
-    
-    Vo = None
-    alpha = None
-    timeSinceBegin = None
-    posInit = Vector2(0,0)
-    image = None
-    isInMotion = False
-    position = None
-    isRightDirection = None
 
     def __init__(self, vo, alphaa, posinit, direction):
         self.Vo = vo

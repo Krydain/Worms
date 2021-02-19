@@ -6,12 +6,10 @@ from Character import Character
 
 
 class Teams:
+    
     blueTeam = []
     redTeam = []
-
     teamTurn = 1
-
-    world = None
     actualCharacter = Character(0)
 
     def __init__(self,wrld):

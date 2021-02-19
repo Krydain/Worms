@@ -6,7 +6,6 @@ from pygame.locals import *
 
 class Trajectory:
     
-
     def __init__(self, world):
         self.v0 = None
         self.alpha = None
