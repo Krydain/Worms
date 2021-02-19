@@ -22,11 +22,11 @@ class EventHandler:
     stateGame = None
     mousePosition = None
 
-    def __init__(self, team, stategame, world):
+    def __init__(self, world):
         x, y = pygame.mouse.get_pos()
         self.mousePosition = Vector2(x,y)
-        self.teams = team
-        self.stateGame = stategame
+        self.teams = world.teams
+        self.stateGame = world.stateGame
         self.world = world
 
     def KeyEvent(self, key, action):
@@ -95,7 +95,7 @@ class EventHandler:
     def ProcessMouse(self):
         if (self.stateGame.state == State.InGame or self.stateGame.state == State.WaitPlayer) and self.leftMouse:
             if self.stateGame.CanIAim():
-                self.world.trajectory = Trajectory(self.teams)
+                self.world.trajectory = Trajectory(self.world)
         elif self.stateGame.state == State.InClickForShoot and self.rightMouse:
             if not(self.stateGame.AskToReturnInGame()):
                 self.world.trajectory = None

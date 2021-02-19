@@ -4,10 +4,10 @@ from StateGame import StateGame, State
 
 class UI:
 
-    def __init__(self, screen, teams, stateGame):
-        self.screen = screen
-        self.teams = teams
-        self.stateGame = stateGame
+    def __init__(self, world):
+        self.screen = world.screen
+        self.teams = world.teams
+        self.stateGame = world.stateGame
         self.bulletType1 = pygame.image.load("../Images/GrenadeGame.png").convert_alpha()
 
         self.bulletType2 = pygame.image.load("../Images/RoquetteGame.png").convert_alpha()

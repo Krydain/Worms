@@ -28,8 +28,8 @@ class Teams:
             print("Teams already created")
 
                 
-    def LoadCharacter(self, idd, isEnnemy):
-        character = Character(idd)
+    def LoadCharacter(self, _id, isEnnemy):
+        character = Character(_id)
         character.image = pygame.image.load("../Images/WormsEnnemyModelGame.png").convert_alpha() if isEnnemy else pygame.image.load("../Images/WormsModelGame.png").convert_alpha()
         character.image = pygame.transform.scale(character.image, (25, 38))
         

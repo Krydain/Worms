@@ -28,7 +28,7 @@ class Character:
         self.move.x = self.move.x + x
         self.move.y = self.move.y + y
 
-    def Move(self,delta, teams):
+    def Move(self, delta, teams):
         self.position.x = self.position.x + self.move.x * delta
         self.position.y = self.position.y + self.move.y * delta
         self.move.x = 0
