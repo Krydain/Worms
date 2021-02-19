@@ -45,6 +45,8 @@ class World:
         self.physicTimer = Timer()
         self.bullet = None
         self.wind = Wind(self.screen)
+        self.wind.isWindy = True
+        self.wind.New(self.screen)
         self.teams = Teams(self)
         self.stateGame = StateGame(self.teams)
         self.eventHandler = EventHandler(self)
