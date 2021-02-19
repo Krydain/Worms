@@ -9,7 +9,6 @@ class UI:
         self.teams = world.teams
         self.stateGame = world.stateGame
         self.bulletType1 = pygame.image.load("../Images/GrenadeGame.png").convert_alpha()
-
         self.bulletType2 = pygame.image.load("../Images/RoquetteGame.png").convert_alpha()
 
 

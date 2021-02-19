@@ -9,14 +9,12 @@ class Character:
     characterId = None
     velocity = None
     
-
     def __init__(self, _id):
         self.position = Vector2(0,0)
         self.life = 100
         self.characterId = _id
         self.move = Vector2(0,0)
         self.velocity = Vector2(0,0)
-
 
     def __eq__(self, other):
         if isinstance(other, Character):

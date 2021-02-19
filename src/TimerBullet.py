@@ -13,7 +13,6 @@ class TimerBullet:
         self.timer.deltaTime()
         self.world = world
         
-
     def Update(self):
         self.timePassed = self.timePassed + self.timer.deltaTime()
         if self.timePassed > self.delay:

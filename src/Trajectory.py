@@ -28,7 +28,6 @@ class Trajectory:
         self.maxHeight = (self.v0**2) * (math.sin(alphaa)**2) / (2*-9.81) *-1 if isAbove else 0
         self.maxWidth = self.v0**2 * math.sin(self.alpha) * math.cos(self.alpha) / -9.81 if isAbove else 0
 
-
         if not(self.isRightDirection):
             self.maxWidth = self.maxWidth * -1
 

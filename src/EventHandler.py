@@ -44,14 +44,12 @@ class EventHandler:
     def MouseMotion(self):
         izi = 1
 
-
     def MouseUp(self, btn):
         if btn == 1: # left click
             self.leftMouse = False
         elif btn == 3: # right click
             self.rightMouse = False
             print("Right click up")
-
 
     def MouseDown(self,btn):
         if btn == 1: # left click

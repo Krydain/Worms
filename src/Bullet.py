@@ -2,6 +2,7 @@ from Vector2 import Vector2
 import math
 
 class Bullet:
+    
     Vo = None
     alpha = None
     timeSinceBegin = None

@@ -90,5 +90,4 @@ class Teams:
             x = x1 - x2
         else:
             x = x2 - x1
-
         return x < 15
