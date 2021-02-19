@@ -1,0 +1,16 @@
+William Plessis (80% Programmation / 20% Math):
+- Création des images (joueurs, map, ...)
+- Création de tous les scripts :
+	Gestion des joueurs
+	Gestion du tour par tour
+	Gestion des inputs
+	Gestion d'une trajectoire dans le vide
+	Gestion des balles (explosion retardée, rayon d'impact)
+	Gestion gravité des caractères
+	Création du tracé de la trajectoire
+	Création du vecteur vent
+	
+
+Fabien Souillard (20% Programmation / 80% Math):
+
+
