@@ -30,6 +30,8 @@ class Teams:
         character = Character(_id)
         character.image = pygame.image.load("../Images/WormsEnnemyModelGame.png").convert_alpha() if isEnnemy else pygame.image.load("../Images/WormsModelGame.png").convert_alpha()
         character.image = pygame.transform.scale(character.image, (25, 38))
+        character.imageFocus = pygame.image.load("../Images/WormsEnnemyModelGameFocus.png").convert_alpha() if isEnnemy else pygame.image.load("../Images/WormsModelGameFocus.png").convert_alpha()
+        character.imageFocus = pygame.transform.scale(character.imageFocus, (25, 38))
         
         self.world.objects.append(character)
 
@@ -46,12 +48,14 @@ class Teams:
             self.Next()
 
     def Next(self):
+        self.actualCharacter.image, self.actualCharacter.imageFocus = self.actualCharacter.imageFocus, self.actualCharacter.image
         self.teamTurn = self.teamTurn + 1
         self.actualCharacter = None
         if self.teamTurn % 2: #blue team
             self.actualCharacter = self.blueTeam[random.randint(0, len(self.blueTeam) - 1)]
         else: # red team
             self.actualCharacter = self.redTeam[random.randint(0, len(self.redTeam) - 1)]
+        self.actualCharacter.image, self.actualCharacter.imageFocus = self.actualCharacter.imageFocus, self.actualCharacter.image
 
 
     def CharacterDied(self, charac):

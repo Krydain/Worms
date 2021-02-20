@@ -9,6 +9,8 @@ class Character:
         self.move = Vector2(0,0)
         self.velocity = Vector2(0,0)
         self.image = None
+        self.imageFocus = None
+        self.focus = False
         self.radius = None
         self.rotation = None
         self.physic = None
