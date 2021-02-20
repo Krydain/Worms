@@ -2,6 +2,7 @@ import random
 import pygame
 from pygame.locals import *
 
+
 class Wind:
 
     def __init__(self, scren):
@@ -18,4 +19,5 @@ class Wind:
         self.y = random.random() * 30 * isMinus2
 
     def DrawWind(self):
-        pygame.draw.line(self.screen, (255,255,255), (886,55), (self.x + 886, self.y + 55),3) 
+        pygame.draw.line(self.screen, (255, 255, 255),
+                         (886, 55), (self.x + 886, self.y + 55), 3)

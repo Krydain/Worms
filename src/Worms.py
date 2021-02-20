@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import pygame
 from pygame.locals import *
 from datetime import datetime
@@ -19,16 +20,17 @@ from TimerBullet import TimerBullet
 
 gravity = -9.81
 
+
 class World:
 
     graphicTimer = None
     objects = []
     physicObjects = []
     backgroundImage = None
-    
+
     bulletType = False
     timerBullet = None
-    resolutionRef = Vector2(1920,1080) 
+    resolutionRef = Vector2(1920, 1080)
     actualResolution = None
     ratioResolution = None
 
@@ -36,11 +38,12 @@ class World:
 
     screen = None
 
-    def __init__(self,x,y,):
+    def __init__(self, x, y,):
         pygame.init()
         self.screen = pygame.display.set_mode((x, y))
-        self.actualResolution = Vector2(x,y)
-        self.ratioResolution = Vector2(self.resolutionRef.x/self.actualResolution.x,self.resolutionRef.y/self.actualResolution.y)
+        self.actualResolution = Vector2(x, y)
+        self.ratioResolution = Vector2(
+            self.resolutionRef.x/self.actualResolution.x, self.resolutionRef.y/self.actualResolution.y)
         self.graphicTimer = Timer()
         self.physicTimer = Timer()
         self.bullet = None
@@ -53,22 +56,23 @@ class World:
         self.ui = UI(self)
 
     def Start(self):
-        self.screen.blit(self.backgroundImage.image,(0,0))
+        self.screen.blit(self.backgroundImage.image, (0, 0))
         self.graphicTimer.deltaTime()
         self.physicTimer.deltaTime()
 
     def UpdateGraphics(self):
 
         deltaGraphic = self.graphicTimer.deltaTime()
-        self.screen.blit(self.backgroundImage.image, (0,0)) 
+        self.screen.blit(self.backgroundImage.image, (0, 0))
 
         for obj in self.objects:
-            obj.Move(deltaGraphic,self.teams)
-                
-            self.screen.blit(obj.image, (obj.position.x,obj.position.y))      #draw new player
-        
+            obj.Move(deltaGraphic, self.teams)
+
+            # draw new player
+            self.screen.blit(obj.image, (obj.position.x, obj.position.y))
+
         if isinstance(self.bullet, Bullet):
-            if self.bullet.isInMotion: 
+            if self.bullet.isInMotion:
                 isTouch = self.bullet.UpdatePosition(deltaGraphic)
                 if isTouch is True:
                     delay = 5 if self.bulletType else 0
@@ -78,30 +82,31 @@ class World:
                     self.stateGame.state = State.WaitPlayerToSpace
                     self.teams.Next()
 
-
             if self.bullet != None:
-                self.screen.blit(self.bullet.image, (self.bullet.position.x,self.bullet.position.y)) 
+                self.screen.blit(
+                    self.bullet.image, (self.bullet.position.x, self.bullet.position.y))
 
         if self.trajectory != None:
             self.trajectory.GetPropertiesTrajectory()
             self.trajectory.DrawTrajectory()
 
-        if self.wind.isWindy: 
+        if self.wind.isWindy:
             self.wind.DrawWind()
 
         if self.timerBullet != None:
             self.timerBullet.Update()
 
         self.ui.Draw(self.bulletType)
-            
-        
+
     def LoadBullet(self):
         self.trajectory.GetPropertiesTrajectory()
-        self.bullet = Bullet(self.trajectory.v0, self.trajectory.alpha, self.trajectory.posIni, self.trajectory.isRightDirection)
-        self.bullet.image = pygame.image.load("../Images/GrenadeGame.png") if self.bulletType else pygame.image.load("../Images/RoquetteBulletGame.png")
-        self.bullet.image = pygame.transform.scale(self.bullet.image, (6, 7)) if self.bulletType else pygame.transform.scale(self.bullet.image, (6, 7))
+        self.bullet = Bullet(self.trajectory.v0, self.trajectory.alpha,
+                             self.trajectory.posIni, self.trajectory.isRightDirection)
+        self.bullet.image = pygame.image.load(
+            "../Images/GrenadeGame.png") if self.bulletType else pygame.image.load("../Images/RoquetteBulletGame.png")
+        self.bullet.image = pygame.transform.scale(
+            self.bullet.image, (6, 7)) if self.bulletType else pygame.transform.scale(self.bullet.image, (6, 7))
         self.trajectory = None
-
 
     def SwitchBulletType(self):
         self.bulletType = not(self.bulletType)
@@ -126,12 +131,6 @@ class World:
             self.physicObjects.remove(obj)
         self.objects.remove(obj)
 
-    
-        
-
-
-
-
 
 class Physic:
     acceleration = 0.0
@@ -140,8 +139,8 @@ class Physic:
     inMotion = False
 
     def __init__(self):
-        self.collider = Vector2(0,0) # TO CHANGE
-    
+        self.collider = Vector2(0, 0)  # TO CHANGE
+
     def UpdatePhysics(self):
         return None
 
@@ -156,19 +155,17 @@ def LoadBackground():
     world.backgroundImage = background
 
 
-world = World(960,540)
+world = World(960, 540)
 
 LoadBackground()
-
 
 world.Start()
 world.teams.BeginGame()
 
 # 4 - keep looping through
 while 1:
-
     world.eventHandler.GetEvents()
     world.eventHandler.ProcessEvents()
     world.UpdateGraphics()
     pygame.display.update()
-    pygame.time.delay(12) 
+    pygame.time.delay(12)

@@ -1,6 +1,7 @@
 from enum import Enum
 from Timer import Timer
 
+
 class State(Enum):
     Nothing = 0
     Start = 1
@@ -10,6 +11,7 @@ class State(Enum):
     InClickForShoot = 5
     WaitBullet = 6
     HasWin = 7
+
 
 class StateGame:
 
@@ -32,7 +34,7 @@ class StateGame:
                 self.teams.Next()
                 return False
             else:
-                return True 
+                return True
         elif self.state == State.WaitPlayer:
             self.StartTurn()
             self.state = State.InGame
@@ -48,7 +50,7 @@ class StateGame:
                 return False
             else:
                 self.state = State.InClickForShoot
-                return True 
+                return True
         elif self.state == State.WaitPlayer:
             self.StartTurn()
             self.state = State.InClickForShoot
@@ -62,12 +64,11 @@ class StateGame:
             return False
         else:
             self.state = State.InGame
-            return True 
-        
+            return True
+
     def GetTimeTurn(self):
         if self.timeTurn < 3:
             self.timeTurn = self.timeTurn + self.timer.deltaTime()
-            return self.timeTurn 
+            return self.timeTurn
         else:
             return 3
-

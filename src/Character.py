@@ -1,13 +1,14 @@
 from Vector2 import Vector2
 
+
 class Character:
-    
+
     def __init__(self, _id):
-        self.position = Vector2(0,0)
+        self.position = Vector2(0, 0)
         self.life = 100
         self.characterId = _id
-        self.move = Vector2(0,0)
-        self.velocity = Vector2(0,0)
+        self.move = Vector2(0, 0)
+        self.velocity = Vector2(0, 0)
         self.image = None
         self.imageFocus = None
         self.focus = False
@@ -22,7 +23,7 @@ class Character:
         else:
             return False
 
-    def SetMove(self,x,y):
+    def SetMove(self, x, y):
         self.move.x = self.move.x + x
         self.move.y = self.move.y + y
 
@@ -32,7 +33,7 @@ class Character:
         self.move.x = 0
         self.move.y = 0
 
-        Vector2.ApplyGravity(self,delta)
+        Vector2.ApplyGravity(self, delta)
 
         if self.position.y > 540:
             teams.CharacterDied(self)

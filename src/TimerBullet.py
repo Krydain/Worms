@@ -1,5 +1,6 @@
 from Timer import Timer
 
+
 class TimerBullet:
 
     def __init__(self, bullet, delay, world):
@@ -9,7 +10,7 @@ class TimerBullet:
         self.timePassed = 0.0
         self.timer.deltaTime()
         self.world = world
-        
+
     def Update(self):
         self.timePassed = self.timePassed + self.timer.deltaTime()
         if self.timePassed > self.delay:
